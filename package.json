@@ -1,12 +1,12 @@
 {
   "name": "kill-use-callback",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "description": "React withStable HOC",
   "license": "MIT",
   "keywords": [
     "react",
-    "hoc",
-    "stable-callback",
+    "react-hook",
+    "useCallback",
     "kill-use-callback"
   ],
   "repository": "https://github.com/oney/kill-use-callback.git",
