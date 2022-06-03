@@ -14,16 +14,19 @@ import React from "react";
 import { propsAreEqual, depFn, useEffect } from "./kill-use-callback";
 
 const Child = React.memo(
-  ({getText}) => <div>{getText()}</div>,
-  propsAreEqual);
+  ({ getText }) => <div>{getText()}</div>,
+  propsAreEqual
+);
 
 export default function App({items}) {
   const [text, setText] = React.useState("a");
   const [text2, setText2] = React.useState("b");
 
-  const getText = depFn((prefix) => `${prefix}: ${text}`, [text]);
+  const getText = text.length === 10
+    ? undefined
+    : depFn((prefix) => `${prefix}: ${text}`, [text]);
   useEffect(() => {
-    console.log(getText("Effect"));
+    console.log(getText?.("Effect"));
   }, [getText]);
 
   return (
@@ -37,7 +40,18 @@ export default function App({items}) {
 ```
 
 When `text2` changes, `Child` won't re-render and the effect won't re-trigger.  
-And `text` changes, `Child` will re-render and the effect will re-trigger.  
+And `text` changes, `Child` will re-render and the effect will re-trigger.
+
+## depFn
+The usage of `depFn` is just like `useCallback`. Wrap your callback function and list all dependencies in the 2nd parameter.
 
 ## Demo
 Please check [this codesandbox example](https://codesandbox.io/s/kill-usecallback-k82teg?file=/src/App.tsx:0-1870).
+
+# Explanation
+
+`depFn` is not a React hook that needs to depend on React lifecycle, so `depFn` can be used anywhere like in a condition or in a loop.
+
+If two closures have the same "function body code", and the same "environment" (or context) which actually means the dependency of values or references, these two closures can be considered as equal.
+
+This concept is how `depFn` works. Just check the source code of this package. It's easy to understand.
